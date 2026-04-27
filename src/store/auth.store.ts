@@ -5,6 +5,7 @@ import * as authService from '@/services/auth.service'
 
 interface AuthState {
   user: Employee | null
+  token: string | null
   isAuthenticated: boolean
   isLoading: boolean
   login: (email: string, password: string) => Promise<void>
@@ -16,22 +17,41 @@ export const useAuthStore = create<AuthState>()(
   persist(
     (set, get) => ({
       user: null,
+      token: null,
       isAuthenticated: false,
       isLoading: false,
       login: async (email, password) => {
         set({ isLoading: true })
         try {
-          const user = await authService.login(email, password)
-          set({ user, isAuthenticated: true, isLoading: false })
+          // 1. Login to get token
+          const { access_token } = await authService.login(email, password)
+          
+          // 2. Set token temporarily to fetch user
+          set({ token: access_token })
+          
+          // 3. Fetch current user data
+          const user = await authService.getMe()
+          
+          set({ 
+            user, 
+            token: access_token, 
+            isAuthenticated: true, 
+            isLoading: false 
+          })
         } catch (e) {
-          set({ isLoading: false })
+          set({ isLoading: false, token: null, user: null, isAuthenticated: false })
           throw e
         }
       },
-      logout: () => set({ user: null, isAuthenticated: false }),
-      updateProfile: (data) => {
-        const u = get().user
-        if (u) set({ user: { ...u, ...data } as Employee })
+      logout: () => set({ user: null, token: null, isAuthenticated: false }),
+      updateProfile: async (data) => {
+        try {
+          const updatedUser = await authService.updateProfile(data)
+          set({ user: updatedUser })
+        } catch (e) {
+          console.error("Failed to update profile", e)
+          throw e
+        }
       },
     }),
     { name: 'swe-auth' },

@@ -1,0 +1,27 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: digsharing-backend
+    ports:
+      - "8001:8000"
+    volumes:
+      - ./backend:/backend
+    environment:
+      - ENV=development
+    restart: always
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: digsharing-frontend
+    ports:
+      - "5173:5173"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    depends_on:
+      - backend
+    restart: always

@@ -1,15 +1,24 @@
 import { Outlet } from 'react-router-dom'
 import { Sidebar } from './Sidebar'
 import { Header } from './Header'
+import { useUIStore } from '@/store/ui.store'
+import { cn } from '@/utils/cn'
 
 export function AppLayout() {
+  const sidebarCollapsed = useUIStore((s) => s.sidebarCollapsed)
+
   return (
-    <div className="flex min-h-screen min-w-0 bg-surface-3">
+    <div className="flex h-screen bg-bg text-fg">
       <Sidebar />
-      <div className="flex min-w-0 flex-1 flex-col">
+      <div className="flex flex-1 flex-col min-w-0 overflow-hidden">
         <Header />
-        <main className="flex-1 overflow-auto p-4 md:p-6">
-          <div className="mx-auto max-w-7xl">
+        <main 
+          className={cn(
+            "flex-1 overflow-y-auto bg-bg p-6 md:p-8 transition-all duration-300",
+            "mx-auto w-full max-w-7xl"
+          )}
+        >
+          <div className="mx-auto w-full max-w-7xl">
             <Outlet />
           </div>
         </main>

@@ -91,7 +91,6 @@ function NavItemLink({
           collapsed && 'justify-center px-2',
         )
       }
-      end={item.path === ROUTES.ADMIN}
     >
       <Icon className="h-4 w-4 shrink-0" aria-hidden />
       {!collapsed ? (
@@ -175,14 +174,14 @@ export function Sidebar() {
           >
             <div className="flex justify-center">
               <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-medium text-fg-inverse">
-                {user.firstName[0]}
-                {user.lastName[0]}
+                {user.firstName?.[0] || 'U'}
+                {user.lastName?.[0] || ''}
               </span>
             </div>
             {!sidebarCollapsed ? (
               <div className="min-w-0 overflow-hidden">
                 <p className="truncate text-sm font-medium leading-tight text-fg-inverse">
-                  {user.firstName} {user.lastName}
+                  {user.firstName || 'User'} {user.lastName || ''}
                 </p>
                 <p className="truncate text-xs leading-tight text-fg-inverse/70">
                   {user.role.replace('_', ' ')}

@@ -93,13 +93,13 @@ function EmployeeHome() {
         <Card>
           <p className="text-sm text-fg-secondary">Active allocations</p>
           <p className="mt-1 font-mono text-2xl font-semibold text-fg">
-            {user.allocation.length}
+            {user.allocation?.length || 0}
           </p>
         </Card>
         <Card>
           <p className="text-sm text-fg-secondary">Skills</p>
           <p className="mt-1 font-mono text-2xl font-semibold text-fg">
-            {user.skills.length}
+            {user.skills?.length || 0}
           </p>
           <Link
             className="mt-2 inline-block text-sm text-primary hover:underline"

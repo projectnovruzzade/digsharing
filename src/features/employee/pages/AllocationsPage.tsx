@@ -10,7 +10,7 @@ export default function AllocationsPage() {
     <div>
       <PageHeader title="My allocations" />
       <div className="space-y-4">
-        {user.allocation.map((a) => (
+        {(user.allocation || []).map((a) => (
           <Card key={`${a.companyId}-${a.projectName}`} className="p-5 flex flex-col gap-4">
             <div className="flex justify-between items-start gap-2">
               <div>

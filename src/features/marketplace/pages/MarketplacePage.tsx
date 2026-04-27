@@ -1,13 +1,14 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { useMemo, useState } from 'react'
+import { useMemo, useState, useEffect } from 'react'
 import { toast } from 'react-toastify'
 import { Badge, Button, Card, Input, Modal, Progress } from '@/components/ui'
 import { PageHeader } from '@/components/layout/PageHeader'
 import { useDebounce } from '@/hooks/useDebounce'
 import { useAuthStore } from '@/store/auth.store'
-import { applyToListing, getListings } from '@/services/marketplace.service'
+import { applyToListing, getListings, getListingAIAnalysis } from '@/services/marketplace.service'
 import type { Listing } from '@/types/marketplace.types'
 import { cn } from '@/utils/cn'
+import { Bot, Sparkles, Loader2 } from 'lucide-react'
 
 function matchLabel(score?: number): { text: string; variant: 'success' | 'primary' | 'warning' | 'muted' } {
   if (score == null || score < 40) return { text: 'Low match', variant: 'muted' }
@@ -24,6 +25,10 @@ export default function MarketplacePage() {
   const [highMatchOnly, setHighMatchOnly] = useState(false)
   const [selected, setSelected] = useState<Listing | null>(null)
   const [note, setNote] = useState('')
+  
+  // Real-time AI Analysis State
+  const [aiAnalysis, setAiAnalysis] = useState<{ score: number; explanation: string } | null>(null)
+  const [isAiLoading, setIsAiLoading] = useState(false)
 
   const filters = useMemo(
     () => ({
@@ -37,6 +42,23 @@ export default function MarketplacePage() {
     queryKey: ['listings', filters],
     queryFn: () => getListings(filters),
   })
+
+  // Fetch AI analysis when a listing is selected
+  useEffect(() => {
+    if (selected && user) {
+      setAiAnalysis(null)
+      setIsAiLoading(true)
+      getListingAIAnalysis(selected.id, user.id)
+        .then(res => {
+          setAiAnalysis(res)
+        })
+        .catch(err => {
+          console.error("AI Analysis failed", err)
+          setAiAnalysis({ score: selected.aiMatchScore || 70, explanation: "AI analysis is currently unavailable." })
+        })
+        .finally(() => setIsAiLoading(false))
+    }
+  }, [selected, user])
 
   const applyMut = useMutation({
     mutationFn: () => {
@@ -83,15 +105,26 @@ export default function MarketplacePage() {
               />
               AI match 70%+
             </label>
-            <p className="mt-2 text-xs text-fg-muted">
-              {listings.length} results (mock filter)
-            </p>
+          </Card>
+          
+          <Card className="p-4 bg-primary/5 border-primary/20">
+             <div className="flex items-center gap-2 text-primary font-semibold text-sm">
+               <Bot size={16} />
+               <span>AI Advisor</span>
+             </div>
+             <p className="mt-2 text-xs text-fg-secondary leading-relaxed">
+               Our Groq-powered AI analyzes your skills against job requirements in real-time.
+             </p>
           </Card>
         </aside>
 
         <div className="min-w-0 flex-1">
           {isLoading ? (
-            <p className="text-sm text-fg-secondary">Loading listings…</p>
+            <div className="grid gap-4 md:grid-cols-2">
+              {[1,2,3,4].map(i => (
+                <Card key={i} className="h-48 animate-pulse bg-surface-2" />
+              ))}
+            </div>
           ) : (
             <div className="grid gap-4 md:grid-cols-2">
               {listings.map((l) => {
@@ -107,7 +140,10 @@ export default function MarketplacePage() {
                         {l.company.name}
                       </span>
                       {l.aiMatchScore != null && l.aiMatchScore >= 40 ? (
-                        <Badge variant={m.variant}>{m.text}</Badge>
+                        <Badge variant={m.variant} className="flex items-center gap-1">
+                          <Sparkles size={10} />
+                          {m.text}
+                        </Badge>
                       ) : null}
                     </div>
                     <h3 className="font-display text-base font-semibold text-fg">
@@ -129,11 +165,6 @@ export default function MarketplacePage() {
                           {s.name}
                         </Badge>
                       ))}
-                      {l.requiredSkills.length > 3 ? (
-                        <span className="text-xs text-fg-muted">
-                          +{l.requiredSkills.length - 3}
-                        </span>
-                      ) : null}
                     </div>
                     <div className="mt-4 flex flex-wrap items-center justify-between gap-2 border-t border-border pt-4">
                       <span className="text-xs text-fg-muted">
@@ -142,12 +173,14 @@ export default function MarketplacePage() {
                       <div className="flex gap-2">
                         <Button
                           variant="secondary"
+                          size="sm"
                           type="button"
                           onClick={() => setSelected(l)}
                         >
-                          Details
+                          Details & AI Analysis
                         </Button>
                         <Button
+                          size="sm"
                           type="button"
                           onClick={() => {
                             setSelected(l)
@@ -168,7 +201,10 @@ export default function MarketplacePage() {
 
       <Modal
         open={!!selected}
-        onClose={() => setSelected(null)}
+        onClose={() => {
+          setSelected(null)
+          setAiAnalysis(null)
+        }}
         title={selected?.title ?? ''}
         className="max-w-2xl"
         footer={
@@ -187,30 +223,58 @@ export default function MarketplacePage() {
         }
       >
         {selected ? (
-          <div className="space-y-4">
-            <p className="text-fg-secondary">{selected.description}</p>
-            {user && selected.aiMatchScore != null ? (
-              <div>
-                <p className="text-sm font-medium text-fg">
-                  Your match: {selected.aiMatchScore}%
-                </p>
-                <Progress value={selected.aiMatchScore} className="mt-2" />
+          <div className="space-y-6">
+            <div>
+              <h4 className="text-sm font-bold uppercase tracking-wider text-fg-muted mb-2">Description</h4>
+              <p className="text-fg-secondary text-sm leading-relaxed">{selected.description}</p>
+            </div>
+
+            <div className="rounded-xl border border-primary/20 bg-primary/5 p-5">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2 text-primary font-bold">
+                  <Sparkles size={18} />
+                  <span>Groq AI Match Analysis</span>
+                </div>
+                {isAiLoading && <Loader2 className="animate-spin text-primary" size={18} />}
               </div>
-            ) : null}
-            <label className="block text-sm font-medium text-fg">
-              Motivation (max 500)
-            </label>
-            <textarea
-              className={cn(
-                'w-full rounded-md border border-border p-3 text-sm',
-                'focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20',
-              )}
-              rows={4}
-              maxLength={500}
-              value={note}
-              onChange={(e) => setNote(e.target.value)}
-            />
-            <p className="text-xs text-fg-muted">{note.length}/500</p>
+
+              {isAiLoading ? (
+                <div className="space-y-3">
+                  <div className="h-2 w-full bg-primary/10 rounded-full overflow-hidden">
+                    <div className="h-full bg-primary animate-[shimmer_1.5s_infinite] w-1/3" />
+                  </div>
+                  <div className="h-4 w-3/4 bg-primary/10 rounded animate-pulse" />
+                </div>
+              ) : aiAnalysis ? (
+                <div className="space-y-4">
+                  <div className="flex items-center gap-4">
+                    <div className="text-3xl font-bold text-primary">{aiAnalysis.score}%</div>
+                    <Progress value={aiAnalysis.score} className="flex-1 h-2 bg-primary/10" />
+                  </div>
+                  <p className="text-sm text-fg-secondary italic font-medium leading-relaxed">
+                    "{aiAnalysis.explanation}"
+                  </p>
+                </div>
+              ) : null}
+            </div>
+
+            <div>
+              <label className="block text-sm font-bold uppercase tracking-wider text-fg-muted mb-2">
+                Motivation Note
+              </label>
+              <textarea
+                className={cn(
+                  'w-full rounded-md border border-border p-3 text-sm',
+                  'focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20',
+                )}
+                rows={3}
+                placeholder="Why are you a good fit for this role?"
+                maxLength={500}
+                value={note}
+                onChange={(e) => setNote(e.target.value)}
+              />
+              <p className="text-right text-[10px] text-fg-muted mt-1">{note.length}/500</p>
+            </div>
           </div>
         ) : null}
       </Modal>

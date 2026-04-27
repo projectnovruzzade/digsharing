@@ -1,26 +1,36 @@
 import type { Employee } from '@/types/employee.types'
-import { delay } from './api'
-import { MOCK_EMPLOYEES } from './mock/employees.mock'
+import { api } from './api'
 
-const DEMO_ACCOUNTS: Record<string, { password: string; userId: string }> = {
-  'employee@demo.az': { password: 'demo123', userId: 'emp_001' },
-  'hr@demo.az': { password: 'demo123', userId: 'emp_hr' },
-  'manager@demo.az': { password: 'demo123', userId: 'emp_002' },
-  'cfo@demo.az': { password: 'demo123', userId: 'emp_cfo' },
-  'admin@demo.az': { password: 'demo123', userId: 'emp_admin' },
+export interface LoginResponse {
+  access_token: string
+  token_type: string
 }
 
-export async function login(email: string, password: string): Promise<Employee> {
-  await delay(400)
-  const normalized = email.trim().toLowerCase()
-  const demo = DEMO_ACCOUNTS[normalized]
-  if (demo && demo.password === password) {
-    const user = MOCK_EMPLOYEES.find((e) => e.id === demo.userId)
-    if (user) return user
-  }
-  const byEmail = MOCK_EMPLOYEES.find(
-    (e) => e.email.toLowerCase() === normalized,
-  )
-  if (byEmail && password === 'demo123') return byEmail
-  throw new Error('Invalid email or password.')
+export async function login(email: string, password: string): Promise<LoginResponse> {
+  // FastAPI OAuth2 expects form data
+  const formData = new URLSearchParams()
+  formData.append('username', email)
+  formData.append('password', password)
+
+  const response = await api.post<LoginResponse>('/auth/login', formData, {
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+  })
+  return response.data
+}
+
+export async function register(userData: any): Promise<Employee> {
+  const response = await api.post<Employee>('/auth/register', userData)
+  return response.data
+}
+
+export async function getMe(): Promise<Employee> {
+  const response = await api.get<Employee>('/auth/me')
+  return response.data
+}
+
+export async function updateProfile(data: Partial<Employee>): Promise<Employee> {
+  const response = await api.patch<Employee>('/auth/me', data)
+  return response.data
 }

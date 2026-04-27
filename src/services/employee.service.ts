@@ -1,13 +1,28 @@
-import type { Employee } from '@/types/employee.types'
-import { delay } from './api'
-import { MOCK_EMPLOYEES } from './mock/employees.mock'
+import type { Employee, Allocation } from '@/types/employee.types'
+import { api } from './api'
 
-export async function getEmployees(): Promise<Employee[]> {
-  await delay(350)
-  return [...MOCK_EMPLOYEES]
+export interface EmployeeFilters {
+  company_id?: string
+  skill_id?: string
+  min_performance?: number
+}
+
+export async function getEmployees(filters?: EmployeeFilters): Promise<Employee[]> {
+  const response = await api.get<Employee[]>('/employees', { params: filters })
+  return response.data
 }
 
 export async function getEmployeeById(id: string): Promise<Employee | null> {
-  await delay(200)
-  return MOCK_EMPLOYEES.find((e) => e.id === id) ?? null
+  const response = await api.get<Employee | null>(`/employees/${id}`)
+  return response.data
+}
+
+export async function updateEmployee(id: string, data: Partial<Employee>): Promise<Employee> {
+  const response = await api.patch<Employee>(`/employees/${id}`, data)
+  return response.data
+}
+
+export async function getEmployeeAllocations(id: string): Promise<Allocation[]> {
+  const response = await api.get<Allocation[]>(`/employees/${id}/allocations`)
+  return response.data
 }

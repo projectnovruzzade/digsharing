@@ -1,17 +1,19 @@
-import { delay } from './api'
-import { MOCK_SWAPS } from './mock/swaps.mock'
+import { api } from './api'
 import type { SwapProposal } from '@/types/marketplace.types'
 
 export async function getSwaps(): Promise<SwapProposal[]> {
-  await delay(300)
-  return [...MOCK_SWAPS]
+  const response = await api.get<SwapProposal[]>('/hr/swaps')
+  return response.data
+}
+
+export async function createSwap(data: any): Promise<SwapProposal> {
+  const response = await api.post<SwapProposal>('/hr/swaps', data)
+  return response.data
 }
 
 export async function updateSwapStatus(
   id: string,
   status: SwapProposal['status'],
 ): Promise<void> {
-  await delay(200)
-  const s = MOCK_SWAPS.find((x) => x.id === id)
-  if (s) s.status = status
+  await api.patch(`/hr/swaps/${id}`, null, { params: { status } })
 }

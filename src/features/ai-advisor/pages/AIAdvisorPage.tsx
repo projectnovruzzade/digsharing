@@ -49,8 +49,8 @@ export default function AIAdvisorPage() {
             {user.firstName} {user.lastName}
           </p>
           <p className="text-sm text-fg-secondary">{user.position}</p>
-          <div className="mt-3 flex flex-wrap gap-1">
-            {user.skills.slice(0, 5).map((s) => (
+          <div className="flex flex-wrap gap-2">
+            {(user.skills || []).slice(0, 5).map((s: any) => (
               <Badge key={s.id} variant="primary">
                 {s.name}
               </Badge>
