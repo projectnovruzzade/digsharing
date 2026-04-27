@@ -10,7 +10,7 @@ class Settings(BaseSettings):
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 7  # 7 days
 
-    GROQ_API_KEY: str = ""
+    AI_SERVICE_API_KEY: str = ""
 
     # Database
     DATABASE_URL: str = "sqlite:///./sql_app.db"  # Default to SQLite for easy build
