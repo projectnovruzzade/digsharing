@@ -22,7 +22,9 @@ def _ensure_hr_can_access_employee(auth_user: Optional[dict[str, Any]], employee
             raise HTTPException(status_code=404, detail="Employee not found")
 
 
-@router.get("/", response_model=List[EmployeeOut])
+# Use "" not "/" so the path is /employees (no trailing slash). "/" would make
+# /employees/ canonical and Starlette returns 307 from /employees → bad for some CORS clients.
+@router.get("", response_model=List[EmployeeOut])
 async def get_employees(
     company_id: Optional[str] = None,
     skill_id: Optional[str] = None,
