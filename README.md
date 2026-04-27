@@ -138,7 +138,7 @@ Git
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/your-org/digsharing.git
+git clone https://github.com/projectnovruzzade/digsharing.git
 cd digsharing
 ```
 
