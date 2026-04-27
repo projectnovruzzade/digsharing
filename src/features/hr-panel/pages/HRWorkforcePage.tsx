@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, queryOptions } from '@tanstack/react-query'
 import {
   createColumnHelper,
   flexRender,
@@ -21,10 +21,12 @@ export default function HRWorkforcePage() {
   const [globalFilter, setGlobalFilter] = useState('')
   const debouncedFilter = globalFilter
 
-  const { data: employees = [], isLoading } = useQuery({
-    queryKey: ['employees'],
-    queryFn: getEmployees,
-  })
+  const { data: employees = [], isLoading } = useQuery(
+    queryOptions({
+      queryKey: ['employees'],
+      queryFn: () => getEmployees(),
+    })
+  )
 
   const columns = useMemo(
     () => [
@@ -45,7 +47,7 @@ export default function HRWorkforcePage() {
         header: 'Top skills',
         cell: (ctx) => (
           <div className="flex flex-wrap gap-1">
-            {ctx.row.original.skills.slice(0, 3).map((s) => (
+            {ctx.row.original.skills.slice(0, 3).map((s: any) => (
               <Badge key={s.id} variant="primary" className="text-xs">
                 {s.name}
               </Badge>
@@ -82,7 +84,7 @@ export default function HRWorkforcePage() {
       col.accessor('performanceScore', {
         header: 'Perf.',
         cell: (ctx) => {
-          const v = ctx.getValue()
+          const v = ctx.getValue() as number
           return (
             <span
               className={
@@ -103,7 +105,7 @@ export default function HRWorkforcePage() {
   )
 
   const table = useReactTable({
-    data: employees,
+    data: (employees as Employee[]) || [],
     columns,
     state: { globalFilter: debouncedFilter },
     onGlobalFilterChange: setGlobalFilter,

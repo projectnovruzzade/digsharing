@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, queryOptions } from '@tanstack/react-query'
 import { motion } from 'framer-motion'
 import { Link, useNavigate } from 'react-router-dom'
 import {
@@ -21,6 +21,7 @@ import { Badge, Button, Card, Progress } from '@/components/ui'
 import { PageHeader } from '@/components/layout/PageHeader'
 import { useAuthStore } from '@/store/auth.store'
 import { getEmployees } from '@/services/employee.service'
+import type { Employee } from '@/types/employee.types'
 import { getListings } from '@/services/marketplace.service'
 import { getCostSummary } from '@/services/cost.service'
 import { ROUTES } from '@/router/routes'
@@ -187,14 +188,16 @@ function EmployeeHome() {
 
 function HRHome() {
   const navigate = useNavigate()
-  const { data: employees = [] } = useQuery({
-    queryKey: ['employees'],
-    queryFn: getEmployees,
-  })
+  const { data: employees = [] } = useQuery(
+    queryOptions({
+      queryKey: ['employees'],
+      queryFn: () => getEmployees(),
+    })
+  )
   const avgLoad =
-    employees.reduce((a, e) => a + e.workloadPercent, 0) /
+    employees.reduce((a: number, e: Employee) => a + e.workloadPercent, 0) /
     Math.max(1, employees.length)
-  const chartData = employees.slice(0, 6).map((e) => ({
+  const chartData = employees.slice(0, 6).map((e: Employee) => ({
     name: e.company.name.slice(0, 8),
     load: e.workloadPercent,
   }))
@@ -322,7 +325,7 @@ function CFOHome() {
                   outerRadius={70}
                   label
                 >
-                  {data.headcountSplit.map((e, i) => (
+                  {data.headcountSplit.map((e: any, i: number) => (
                     <Cell key={i} fill={e.fill} />
                   ))}
                 </Pie>

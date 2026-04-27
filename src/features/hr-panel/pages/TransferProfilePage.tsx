@@ -13,7 +13,6 @@ import {
   Share2
 } from 'lucide-react'
 import { Badge, Button, Card, Progress } from '@/components/ui'
-// ... rest of imports
 import { PageHeader } from '@/components/layout/PageHeader'
 import { toast } from 'react-toastify'
 import { ROUTES } from '@/router/routes'
@@ -191,7 +190,6 @@ export default function TransferProfilePage() {
       />
 
       <div className="grid gap-6 lg:grid-cols-12">
-        {/* Left Sidebar: Profile Summary & Info */}
         <div className="lg:col-span-4 space-y-6">
           <Card className="flex flex-col items-center text-center p-6">
             <div className="relative mb-4">
@@ -279,13 +277,12 @@ export default function TransferProfilePage() {
             <h3 className="mt-8 mb-4 font-bold text-fg">Languages</h3>
             <div className="flex flex-wrap gap-2">
               {profile.languages.map((l: string) => (
-                <Badge key={l} variant="secondary" className="bg-accent/10 text-accent-dark border-accent/20">{l}</Badge>
+                <Badge key={l} variant="default" className="bg-accent/10 text-accent-dark border-accent/20">{l}</Badge>
               ))}
             </div>
           </Card>
         </div>
 
-        {/* Right Content Area */}
         <div className="lg:col-span-8 space-y-6">
           <Card className="p-6">
             <h3 className="mb-3 text-lg font-bold text-fg flex items-center gap-2">
@@ -303,7 +300,7 @@ export default function TransferProfilePage() {
             <div className="space-y-0 relative">
               <div className="absolute left-2.5 top-2 bottom-2 w-0.5 bg-border"></div>
               
-              {profile.experience.map((exp: any, index: number) => (
+              {profile.experience.map((exp: any) => (
                 <div key={exp.id} className="relative pl-10 pb-8 last:pb-2">
                   <div className={cn(
                     "absolute left-0 top-1.5 h-5 w-5 rounded-full border-2 border-white shadow-sm z-10",

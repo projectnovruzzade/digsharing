@@ -5,7 +5,7 @@ import { useUIStore } from '@/store/ui.store'
 import { cn } from '@/utils/cn'
 
 export function AppLayout() {
-  const sidebarCollapsed = useUIStore((s) => s.sidebarCollapsed)
+  useUIStore((s) => s.sidebarCollapsed)
 
   return (
     <div className="flex h-screen bg-bg text-fg">

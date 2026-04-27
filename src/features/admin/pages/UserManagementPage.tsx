@@ -3,9 +3,10 @@ import { toast } from 'react-toastify'
 import { Badge, Card } from '@/components/ui'
 import { PageHeader } from '@/components/layout/PageHeader'
 import { getEmployees } from '@/services/employee.service'
+import { queryOptions } from '@tanstack/react-query'
 
 export default function UserManagementPage() {
-  const { data = [] } = useQuery({ queryKey: ['employees'], queryFn: getEmployees })
+  const { data = [] } = useQuery(queryOptions({ queryKey: ['employees'], queryFn: () => getEmployees() }))
 
   return (
     <div>
@@ -29,7 +30,7 @@ export default function UserManagementPage() {
             </tr>
           </thead>
           <tbody>
-            {data.slice(0, 12).map((e, i) => (
+            {(data as any[]).slice(0, 12).map((e: any, i: number) => (
               <tr key={e.id} className={i % 2 === 0 ? 'bg-surface' : 'bg-surface-2/80'}>
                 <td className="px-4 py-3 font-medium text-fg">
                   {e.firstName} {e.lastName}
