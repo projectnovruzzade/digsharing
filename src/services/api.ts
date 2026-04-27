@@ -1,6 +1,12 @@
 import axios from 'axios'
 
-const API_BASE_URL = 'https://digsharing-production.up.railway.app/api/v1'
+const DEFAULT_API_BASE_URL = import.meta.env.DEV
+  ? 'http://127.0.0.1:8000/api/v1'
+  : 'https://digsharing-production.up.railway.app/api/v1'
+
+const API_BASE_URL =
+  (import.meta.env.VITE_API_BASE_URL as string | undefined)?.replace(/\/+$/, '') ||
+  DEFAULT_API_BASE_URL
 
 export const api = axios.create({
   baseURL: API_BASE_URL,

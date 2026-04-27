@@ -1,13 +1,15 @@
 import { useQuery, queryOptions } from '@tanstack/react-query'
 import { Badge, Card } from '@/components/ui'
 import { PageHeader } from '@/components/layout/PageHeader'
-import { getEmployees } from '@/services/employee.service'
+import { employeesQueryKey, getEmployees } from '@/services/employee.service'
+import { useAuthStore } from '@/store/auth.store'
 import type { Employee } from '@/types/employee.types'
 
 export default function TalentPoolPage() {
+  const user = useAuthStore((s) => s.user)
   const { data = [] } = useQuery(
     queryOptions({
-      queryKey: ['employees'],
+      queryKey: employeesQueryKey(user),
       queryFn: () => getEmployees(),
     })
   )

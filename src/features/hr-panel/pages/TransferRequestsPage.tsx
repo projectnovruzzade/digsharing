@@ -11,7 +11,7 @@ const MOCK_REQUESTS = [
     position: 'Backend Developer',
     type: 'internal',
     from: 'AZAL (Backend Engineering)',
-    to: 'Azərkosmos (Data Engineering)',
+    to: 'Azercosmos (Data Engineering)',
     reason: 'Requested internal transfer for career growth and skill development.',
     date: '2024-11-20',
     status: 'pending'
@@ -22,7 +22,7 @@ const MOCK_REQUESTS = [
     position: 'Senior Systems Engineer',
     type: 'referral',
     from: 'Azİntelecom (HR Dept)',
-    to: 'Your Company',
+    to: 'Metro (İnfrastruktur)',
     reason: 'Surplus candidate perfectly matching your open headcount. Referred by Azİntelecom HR.',
     date: '2024-11-22',
     status: 'pending'

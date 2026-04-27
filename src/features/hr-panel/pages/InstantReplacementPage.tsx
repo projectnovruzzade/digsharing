@@ -4,14 +4,16 @@ import { toast } from 'react-toastify'
 import { Badge, Button, Card } from '@/components/ui'
 import { PageHeader } from '@/components/layout/PageHeader'
 import { findReplacements } from '@/services/ai.service'
-import { getEmployees } from '@/services/employee.service'
+import { employeesQueryKey, getEmployees } from '@/services/employee.service'
+import { useAuthStore } from '@/store/auth.store'
 import type { Employee } from '@/types/employee.types'
 
 export default function InstantReplacementPage() {
+  const user = useAuthStore((s) => s.user)
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const { data: employees = [] } = useQuery(
     queryOptions({
-      queryKey: ['employees'],
+      queryKey: employeesQueryKey(user),
       queryFn: () => getEmployees(),
     })
   )

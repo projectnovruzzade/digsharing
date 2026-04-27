@@ -59,7 +59,7 @@ const MOCK_PROFILES: Record<string, any> = {
       {
         id: 1,
         role: 'Backend Developer',
-        company: 'AZAL (Azerbaijan Airlines)',
+        company: 'AZAL',
         period: '2022 - Present',
         description: 'Developing and maintaining core booking engine APIs. Optimized database queries reducing latency by 30%.',
         isHolding: true
@@ -67,9 +67,9 @@ const MOCK_PROFILES: Record<string, any> = {
       {
         id: 2,
         role: 'Junior Software Engineer',
-        company: 'Pasha Bank',
+        company: 'Aztelekom',
         period: '2020 - 2022',
-        description: 'Worked on internal payment processing services using Java Spring Boot.',
+        description: 'Worked on internal billing and customer service systems using Java Spring Boot.',
         isHolding: false
       }
     ]
@@ -127,7 +127,7 @@ const MOCK_PROFILES: Record<string, any> = {
       {
         id: 2,
         role: 'System Administrator',
-        company: 'Azercell',
+        company: 'BakuBus',
         period: '2016 - 2021',
         description: 'Managed internal network infrastructure and data centers. Reduced downtime by 15% through automation.',
         isHolding: false
@@ -318,7 +318,7 @@ export default function TransferProfilePage() {
                         {exp.role}
                         {exp.isHolding && (
                           <Badge className="bg-primary text-white text-[10px] h-5 px-1.5 uppercase font-bold tracking-tighter">
-                            Azcon Holding
+                            Azərbaycan Holding
                           </Badge>
                         )}
                       </h4>

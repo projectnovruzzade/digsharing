@@ -7,4 +7,6 @@ api_router.include_router(employees.router, prefix="/employees", tags=["employee
 api_router.include_router(marketplace.router, prefix="/marketplace", tags=["marketplace"])
 api_router.include_router(hr.router, prefix="/hr", tags=["hr"])
 api_router.include_router(analytics.router, prefix="/analytics", tags=["analytics"])
+# Compatibility: keep analytics endpoints reachable without "/analytics" group prefix.
+api_router.include_router(analytics.router, tags=["analytics"])
 api_router.include_router(ai.router, prefix="/ai", tags=["ai"])

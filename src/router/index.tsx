@@ -13,7 +13,6 @@ const DashboardPage = lazy(() => import('@/features/dashboard/pages/DashboardPag
 const ProfilePage = lazy(() => import('@/features/employee/pages/ProfilePage'))
 const AllocationsPage = lazy(() => import('@/features/employee/pages/AllocationsPage'))
 const SwapProposalsPage = lazy(() => import('@/features/employee/pages/SwapProposalsPage'))
-const AIAdvisorPage = lazy(() => import('@/features/ai-advisor/pages/AIAdvisorPage'))
 const MarketplacePage = lazy(() => import('@/features/marketplace/pages/MarketplacePage'))
 const MyApplicationsPage = lazy(() => import('@/features/marketplace/pages/MyApplicationsPage'))
 const PostRolePage = lazy(() => import('@/features/marketplace/pages/PostRolePage'))
@@ -63,7 +62,6 @@ export const router = createBrowserRouter([
               { path: 'notifications', element: <NotificationsPage /> },
               { path: 'settings', element: <SettingsPage /> },
               { path: 'profile', element: <ProfilePage /> },
-              { path: 'advisor', element: <AIAdvisorPage /> },
               { path: 'marketplace', element: <MarketplacePage /> },
               { path: 'marketplace/applications', element: <MyApplicationsPage /> },
               { path: 'marketplace/post', element: <PostRolePage /> },

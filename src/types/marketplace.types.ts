@@ -1,5 +1,5 @@
 import type { Company } from './company.types'
-import type { Skill } from './employee.types'
+import type { Employee, Skill } from './employee.types'
 
 export interface Listing {
   id: string
@@ -36,6 +36,9 @@ export interface SwapProposal {
   toEmployeeId: string
   fromCompany: Company
   toCompany: Company
+  /** Present when loaded from API (backend may use IDs not in frontend mock). */
+  fromEmployee?: Pick<Employee, 'id' | 'firstName' | 'lastName'>
+  toEmployee?: Pick<Employee, 'id' | 'firstName' | 'lastName'>
   skillMatchScore: number
   proposedBy: 'ai' | 'hr' | 'manager'
   status: 'pending' | 'approved' | 'rejected' | 'active' | 'completed'
@@ -48,6 +51,7 @@ export interface ListingFilters {
   search?: string
   type?: Listing['type'][]
   companyIds?: string[]
+  employee_id?: string
   minWorkload?: number
   maxWorkload?: number
   skillNames?: string[]

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Badge, Button, Card, Progress, Modal, Input } from '@/components/ui'
 import { PageHeader } from '@/components/layout/PageHeader'
 import { useAuthStore } from '@/store/auth.store'
@@ -10,9 +10,14 @@ const TABS = ['Skills', 'Experience', 'Allocations', 'Performance'] as const
 export default function ProfilePage() {
   const user = useAuthStore((s) => s.user)
   const updateProfile = useAuthStore((s) => s.updateProfile)
+  const refreshMe = useAuthStore((s) => s.refreshMe)
   const [tab, setTab] = useState<(typeof TABS)[number]>('Skills')
   const [isEditOpen, setIsEditOpen] = useState(false)
   const [formData, setFormData] = useState({ firstName: user?.firstName || '', lastName: user?.lastName || '' })
+
+  useEffect(() => {
+    void refreshMe()
+  }, [refreshMe])
 
   if (!user) return null
 
@@ -101,9 +106,22 @@ export default function ProfilePage() {
 
       {tab === 'Experience' ? (
         <Card>
-          <p className="text-sm text-fg-secondary">
-            Timeline mock — add achievements and roles in production.
-          </p>
+          {(user.experience || []).length ? (
+            <div className="space-y-4">
+              {(user.experience || []).map((item) => (
+                <div key={item.id} className="rounded-md border border-border p-3">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <p className="text-sm font-semibold text-fg">{item.title}</p>
+                    <Badge variant="muted">{item.period}</Badge>
+                  </div>
+                  <p className="mt-1 text-xs text-fg-secondary">{item.company}</p>
+                  <p className="mt-2 text-sm text-fg-secondary">{item.summary}</p>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-sm text-fg-secondary">No experience records yet.</p>
+          )}
         </Card>
       ) : null}
 
@@ -125,10 +143,30 @@ export default function ProfilePage() {
       ) : null}
 
       {tab === 'Performance' ? (
-        <Card>
-          <p className="text-sm text-fg-secondary">
-            KPI breakdown and manager feedback would appear here.
-          </p>
+        <Card className="space-y-4">
+          <div>
+            <div className="mb-2 flex justify-between text-sm">
+              <span className="font-medium text-fg">Current performance score</span>
+              <span className="font-mono text-fg-secondary">{user.performanceScore || 0}%</span>
+            </div>
+            <Progress value={user.performanceScore || 0} />
+          </div>
+
+          {(user.performanceHistory || []).length ? (
+            <div className="space-y-3">
+              {(user.performanceHistory || []).map((entry) => (
+                <div key={entry.period} className="rounded-md border border-border p-3">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="font-semibold text-fg">{entry.period}</span>
+                    <Badge variant="primary">{entry.score}%</Badge>
+                  </div>
+                  <p className="mt-2 text-sm text-fg-secondary">{entry.managerNote}</p>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-sm text-fg-secondary">No performance history yet.</p>
+          )}
         </Card>
       ) : null}
     </div>

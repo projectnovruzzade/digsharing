@@ -1,6 +1,11 @@
 import type { Employee, Allocation } from '@/types/employee.types'
 import { api } from './api'
 
+/** Cache key must include role: HR responses are company-scoped; admin sees all. */
+export function employeesQueryKey(user: { role?: string; company?: { id?: string } } | null) {
+  return ['employees', user?.role ?? 'anonymous', user?.company?.id ?? ''] as const
+}
+
 export interface EmployeeFilters {
   company_id?: string
   skill_id?: string

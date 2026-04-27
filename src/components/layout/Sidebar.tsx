@@ -1,7 +1,6 @@
 import {
   ArrowLeftRight,
   BarChart2,
-  Bot,
   Briefcase,
   Building2,
   Calculator,
@@ -29,13 +28,13 @@ import { useUIStore } from '@/store/ui.store'
 import type { UserRole } from '@/types/common.types'
 import { cn } from '@/utils/cn'
 import { ROUTES } from '@/router/routes'
+import { prefetchPath } from '@/router/prefetch'
 import { Button } from '@/components/ui'
 
 const NAV_ITEMS: Record<UserRole, { icon: LucideIcon; label: string; path: string }[]> = {
   employee: [
     { icon: LayoutDashboard, label: 'Dashboard', path: ROUTES.DASHBOARD },
     { icon: User, label: 'My Profile', path: ROUTES.PROFILE },
-    { icon: Bot, label: 'AI Advisor', path: ROUTES.ADVISOR },
     { icon: Briefcase, label: 'Marketplace', path: ROUTES.MARKETPLACE },
     { icon: FileText, label: 'My Applications', path: ROUTES.APPLICATIONS },
     { icon: ArrowLeftRight, label: 'Swap Proposals', path: ROUTES.SWAP_PROPOSALS },
@@ -83,6 +82,8 @@ function NavItemLink({
     <NavLink
       to={item.path}
       title={collapsed ? item.label : undefined}
+      onMouseEnter={() => prefetchPath(item.path)}
+      onFocus={() => prefetchPath(item.path)}
       className={({ isActive }) =>
         cn(
           'flex min-w-0 items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors duration-150',

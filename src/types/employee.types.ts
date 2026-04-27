@@ -22,6 +22,20 @@ export interface Allocation {
   effectiveness?: string
 }
 
+export interface ExperienceEntry {
+  id: string
+  title: string
+  company: string
+  period: string
+  summary: string
+}
+
+export interface PerformanceHistoryEntry {
+  period: string
+  score: number
+  managerNote: string
+}
+
 export interface Employee {
   id: string
   firstName: string
@@ -39,4 +53,6 @@ export interface Employee {
   allocation: Allocation[]
   joinedAt: string
   bio?: string
+  experience?: ExperienceEntry[]
+  performanceHistory?: PerformanceHistoryEntry[]
 }

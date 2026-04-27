@@ -12,6 +12,9 @@ export default function MyApplicationsPage() {
     queryKey: ['applications', user?.id],
     queryFn: () => getApplicationsForUser(user!.id),
     enabled: !!user,
+    staleTime: 0,
+    refetchOnMount: 'always',
+    refetchOnWindowFocus: true,
   })
 
   if (!user) return null

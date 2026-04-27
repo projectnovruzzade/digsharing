@@ -11,6 +11,7 @@ interface AuthState {
   login: (email: string, password: string) => Promise<void>
   logout: () => void
   updateProfile: (data: Partial<Employee>) => void
+  refreshMe: () => Promise<void>
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -51,6 +52,14 @@ export const useAuthStore = create<AuthState>()(
         } catch (e) {
           console.error("Failed to update profile", e)
           throw e
+        }
+      },
+      refreshMe: async () => {
+        try {
+          const user = await authService.getMe()
+          set({ user, isAuthenticated: true })
+        } catch (e) {
+          console.error('Failed to refresh current user', e)
         }
       },
     }),

@@ -21,6 +21,9 @@ app.add_middleware(
 
 # API Router-lərin qoşulması
 app.include_router(api_router, prefix=settings.API_V1_STR)
+# Compatibility prefixes for clients that call /api/* or root-level endpoints.
+app.include_router(api_router, prefix="/api")
+app.include_router(api_router)
 
 @app.get("/health", tags=["Health"])
 async def health_check():

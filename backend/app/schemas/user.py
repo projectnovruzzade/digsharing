@@ -15,6 +15,10 @@ class UserOut(BaseModel):
     allocation: List[Any] = []
     performanceScore: int = 0
     workloadPercent: int = 0
+    joinedAt: Optional[str] = None
+    bio: Optional[str] = None
+    experience: List[Any] = []
+    performanceHistory: List[Any] = []
 
     class Config:
         from_attributes = True

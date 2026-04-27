@@ -20,7 +20,7 @@ import {
 import { Badge, Button, Card, Progress } from '@/components/ui'
 import { PageHeader } from '@/components/layout/PageHeader'
 import { useAuthStore } from '@/store/auth.store'
-import { getEmployees } from '@/services/employee.service'
+import { employeesQueryKey, getEmployees } from '@/services/employee.service'
 import type { Employee } from '@/types/employee.types'
 import { getListings } from '@/services/marketplace.service'
 import { getCostSummary } from '@/services/cost.service'
@@ -188,9 +188,10 @@ function EmployeeHome() {
 
 function HRHome() {
   const navigate = useNavigate()
+  const user = useAuthStore((s) => s.user)
   const { data: employees = [] } = useQuery(
     queryOptions({
-      queryKey: ['employees'],
+      queryKey: employeesQueryKey(user),
       queryFn: () => getEmployees(),
     })
   )

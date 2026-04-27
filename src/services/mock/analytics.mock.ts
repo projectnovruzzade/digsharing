@@ -20,9 +20,13 @@ export const MOCK_HEADCOUNT_SPLIT = [
 ]
 
 export const MOCK_COMPANY_COSTS = [
-  { company: 'AZAL', cost: 890000 },
-  { company: 'ADY(Azərbaycan Dəmir yolları)', cost: 1240000 },
-  { company: 'Azərkosmos', cost: 720000 },
+  { company: 'Azİntelecom', cost: 890000 },
+  { company: 'ADY', cost: 1240000 },
+  { company: 'AZAL', cost: 720000 },
   { company: 'Aztelekom', cost: 610000 },
-  { company: 'Azİntelecom', cost: 480000 },
+  { company: 'Azercosmos', cost: 480000 },
+  { company: 'Metro', cost: 550000 },
+  { company: 'BakuBus', cost: 118000 },
+  { company: 'Bakı gəmiqayırma zavodu', cost: 920000 },
+  { company: 'Teleradio', cost: 340000 },
 ]

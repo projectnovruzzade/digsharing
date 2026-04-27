@@ -14,6 +14,7 @@ import { Badge } from '@/components/ui'
 import { PageHeader } from '@/components/layout/PageHeader'
 import { employeeById } from '@/services/mock/employees.mock'
 import { getSwaps, updateSwapStatus } from '@/services/hr.service'
+import { useAuthStore } from '@/store/auth.store'
 import type { SwapProposal } from '@/types/marketplace.types'
 
 type Col = 'pending' | 'active' | 'completed'
@@ -54,8 +55,8 @@ function SwapCard({ swap, disabled }: { swap: SwapProposal; disabled?: boolean }
     id: swap.id,
     disabled,
   })
-  const a = employeeById(swap.fromEmployeeId)
-  const b = employeeById(swap.toEmployeeId)
+  const a = swap.fromEmployee ?? employeeById(swap.fromEmployeeId)
+  const b = swap.toEmployee ?? employeeById(swap.toEmployeeId)
   const style = transform
     ? { transform: `translate3d(${transform.x}px,${transform.y}px,0)` }
     : undefined
@@ -82,7 +83,11 @@ function SwapCard({ swap, disabled }: { swap: SwapProposal; disabled?: boolean }
 }
 
 export default function SwapManagementPage() {
-  const { data = [] } = useQuery({ queryKey: ['swaps'], queryFn: getSwaps })
+  const user = useAuthStore((s) => s.user)
+  const { data = [] } = useQuery({
+    queryKey: ['swaps', user?.role, user?.company?.id],
+    queryFn: getSwaps,
+  })
   const [swaps, setSwaps] = useState<SwapProposal[]>([])
   useEffect(() => setSwaps(data), [data])
 

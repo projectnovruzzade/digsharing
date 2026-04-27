@@ -8,7 +8,7 @@ import { useAuthStore } from '@/store/auth.store'
 import { applyToListing, getListings, getListingAIAnalysis } from '@/services/marketplace.service'
 import type { Listing } from '@/types/marketplace.types'
 import { cn } from '@/utils/cn'
-import { Bot, Sparkles, Loader2 } from 'lucide-react'
+import { Sparkles, Loader2 } from 'lucide-react'
 
 function matchLabel(score?: number): { text: string; variant: 'success' | 'primary' | 'warning' | 'muted' } {
   if (score == null || score < 40) return { text: 'Low match', variant: 'muted' }
@@ -33,9 +33,10 @@ export default function MarketplacePage() {
   const filters = useMemo(
     () => ({
       search: debounced || undefined,
+      employee_id: user?.id || undefined,
       minMatch: highMatchOnly ? 70 : undefined,
     }),
-    [debounced, highMatchOnly],
+    [debounced, highMatchOnly, user?.id],
   )
 
   const { data: listings = [], isLoading } = useQuery({
@@ -74,6 +75,7 @@ export default function MarketplacePage() {
       setSelected(null)
       setNote('')
       void qc.invalidateQueries({ queryKey: ['listings'] })
+      void qc.invalidateQueries({ queryKey: ['applications'] })
     },
     onError: () => toast.error('Could not submit application.'),
   })
@@ -106,16 +108,6 @@ export default function MarketplacePage() {
               AI match 70%+
             </label>
           </Card>
-          
-          <Card className="p-4 bg-primary/5 border-primary/20">
-             <div className="flex items-center gap-2 text-primary font-semibold text-sm">
-               <Bot size={16} />
-               <span>AI Advisor</span>
-             </div>
-             <p className="mt-2 text-xs text-fg-secondary leading-relaxed">
-               Our Groq-powered AI analyzes your skills against job requirements in real-time.
-             </p>
-          </Card>
         </aside>
 
         <div className="min-w-0 flex-1">
@@ -142,7 +134,7 @@ export default function MarketplacePage() {
                       {l.aiMatchScore != null && l.aiMatchScore >= 40 ? (
                         <Badge variant={m.variant} className="flex items-center gap-1">
                           <Sparkles size={10} />
-                          {m.text}
+                          {l.aiMatchScore}% · {m.text}
                         </Badge>
                       ) : null}
                     </div>

@@ -12,18 +12,20 @@ import * as XLSX from 'xlsx'
 import { toast } from 'react-toastify'
 import { Badge, Button, Card, Input, Progress } from '@/components/ui'
 import { PageHeader } from '@/components/layout/PageHeader'
-import { getEmployees } from '@/services/employee.service'
+import { employeesQueryKey, getEmployees } from '@/services/employee.service'
+import { useAuthStore } from '@/store/auth.store'
 import type { Employee } from '@/types/employee.types'
 
 const col = createColumnHelper<Employee>()
 
 export default function HRWorkforcePage() {
+  const user = useAuthStore((s) => s.user)
   const [globalFilter, setGlobalFilter] = useState('')
   const debouncedFilter = globalFilter
 
   const { data: employees = [], isLoading } = useQuery(
     queryOptions({
-      queryKey: ['employees'],
+      queryKey: employeesQueryKey(user),
       queryFn: () => getEmployees(),
     })
   )
@@ -139,7 +141,7 @@ export default function HRWorkforcePage() {
     <div>
       <PageHeader
         title="Workforce"
-        description="Search, filter, and export the holding employee directory (mock data)."
+        description="Your company workforce — search, filter, and export (API demo)."
         actions={
           <Button type="button" variant="secondary" onClick={exportExcel}>
             Export Excel

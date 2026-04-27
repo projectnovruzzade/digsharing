@@ -8,7 +8,6 @@ export const ROUTES = {
   NOTIFICATIONS: '/notifications',
   SETTINGS: '/settings',
   PROFILE: '/profile',
-  ADVISOR: '/advisor',
   MARKETPLACE: '/marketplace',
   APPLICATIONS: '/marketplace/applications',
   ALLOCATIONS: '/allocations',
